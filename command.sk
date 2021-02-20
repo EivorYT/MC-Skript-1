@@ -1,0 +1,140 @@
+command /skr [<text>]:
+	description: Reload fichier(s) Skript
+	usage: Commande : /skr <nom du skript>
+	permission: op
+	permission message: &cTu n'as pas accès à cette commande...
+	executable by: players and console
+	trigger:
+		if arg-1 is not set:
+			make player execute command "/sk reload all"
+		else:
+			make player execute command "/sk reload %arg-1%"
+
+command /setspawnserveur:
+	description: Définir le spawn du serveur
+	permission: op
+	permission message: &cTu n'as pas accès à cette commande...
+	executable by: players
+	trigger:
+		set {spawn.serveur} to location of block at location of player
+
+
+#----------------------------------------------------------------------------------------------------#
+                                         # Options #
+#----------------------------------------------------------------------------------------------------#
+
+options:
+	CoulJoueurs: &a&l
+	PrefixMessGrade: &7&l[&c&lGESTION DES GRADES&7&l]&r
+	ListeGrades: Liste des grades : Admin, Modérateur, Développeur, Chômeur, Bûcheron, Pêcheur, Fermier, Mineur et Chasseur
+
+	Grade1: &cAdmin
+	Grade2: Modérateur
+	Grade3: &9Développeur
+	Grade4: Chômeur
+	Grade5: Bûcheron
+	Grade6: Pêcheur
+	Grade7: Fermier
+	Grade8: Mineur
+	Grade9: Chasseur
+
+#----------------------------------------------------------------------------------------------------#
+                                         # GESTION DES GRADES #
+#----------------------------------------------------------------------------------------------------#
+
+command /grade <text=liste> [<player>]:
+	description: Commande des grades
+	usage: {@PrefixMessGrade} Commande : /grade <liste|grade> [<joueur>]
+	permission: op
+	permission message: &cTu n'as pas accès à cette commande...
+	executable by: players
+	trigger:
+		if arg-1 is "liste":
+			message "{@PrefixMessGrade} {@ListeGrades}"
+			stop
+		else if arg-1 is "Admin" or "Modérateur" or "Développeur" or "Chômeur" or "Bûcheron" or "Pêcheur" or "Fermier" or "Mineur" or "Chasseur":
+			if arg-2 is set:
+				if arg-1 is "Admin":
+					set {grade.%uuid of arg-2%} to "{@Grade1}"
+					broadcast "Félicitation à {@CoulJoueurs}%arg-2% &rpour son grade &7&l[&r{@Grade1}&7&l] !"
+					stop
+				else if arg-1 is "Modérateur":
+					set {grade.%uuid of arg-2%} to "{@Grade2}"
+					broadcast "Félicitation à {@CoulJoueurs}%arg-2% &rpour son grade &7&l[&r{@Grade2}&7&l] !"
+					stop
+				else if arg-1 is "Développeur":
+					set {grade.%uuid of arg-2%} to "{@Grade3}"
+					broadcast "Félicitation à {@CoulJoueurs}%arg-2% &rpour son grade &7&l[&r{@Grade3}&7&l] !"
+					stop
+				else if arg-1 is "Chômeur":
+					set {grade.%uuid of arg-2%} to "{@Grade4}"
+					broadcast "Félicitation à {@CoulJoueurs}%arg-2% &rpour son grade &7&l[&r{@Grade4}&7&l] !"
+					stop
+				else if arg-1 is "Bûcheron":
+					set {grade.%uuid of arg-2%} to "{@Grade5}"
+					broadcast "Félicitation à {@CoulJoueurs}%arg-2% &rpour son grade &7&l[&r{@Grade5}&7&l] !"
+					stop
+				else if arg-1 is "Pêcheur":
+					set {grade.%uuid of arg-2%} to "{@Grade6}"
+					broadcast "Félicitation à {@CoulJoueurs}%arg-2% &rpour son grade &7&l[&r{@Grade6}&7&l] !"
+					stop
+				else if arg-1 is "Fermier":
+					set {grade.%uuid of arg-2%} to "{@Grade7}"
+					broadcast "Félicitation à {@CoulJoueurs}%arg-2% &rpour son grade &7&l[&r{@Grade7}&7&l] !"
+					stop
+				else if arg-1 is "Mineur":
+					set {grade.%uuid of arg-2%} to "{@Grade8}"
+					broadcast "Félicitation à {@CoulJoueurs}%arg-2% &rpour son grade &7&l[&r{@Grade8}&7&l] !"
+					stop
+				else if arg-1 is "Chasseur":
+					set {grade.%uuid of arg-2%} to "{@Grade9}"
+					broadcast "Félicitation à {@CoulJoueurs}%arg-2% &rpour son grade &7&l[&r{@Grade9}&7&l] !"
+					stop
+			else:
+				message "{@PrefixMessGrade} Tu dois indiquer un joueur. Exemple : /grade mineur Mec_Sympa"
+				stop
+		else:
+			message "{@PrefixMessGrade} Ce grade n'existe pas. Liste des grades : /grade liste"
+			stop
+
+
+#----------------------------------------------------------------------------------------------------#
+                                         # GESTION DES HOMES #
+#----------------------------------------------------------------------------------------------------#
+
+command /spawn:
+	description: Retourner au spawn du serveur
+	aliases: hub, lobby
+	executable by: players
+	trigger:
+		teleport player to {spawn.serveur}
+		message "&7Tu as été téléporté(e) au spawn !"
+
+command /sethome <text>:
+	description: Définir un home
+	usage: Commande : /sethome <nom du home>
+	executable by: players
+	trigger:
+		set {homes::%uuid of player%::%arg-1%} to location of player
+		message "Tu as défini(e) ton home &7%arg-1%&r au &7%location of player%&r."
+
+command /delhome <text>:
+	description: Supprimer un home
+	usage: Commande : /delhome <nom du home>
+	executable by: players
+	trigger:
+		if {homes::%uuid of player%::%arg-1%} is not set:
+			message "Ce home n'existe pas : &7%arg-1%"
+		else:
+			clear {homes::%uuid of player%::%arg-1%}
+			message "Tu as supprimé(e) ton home &7%arg-1%"
+
+command /home <text>:
+	description: Se téléporter à un home
+	usage: Commande : /home <nom du home>
+	executable by: players
+	trigger:
+		if {homes::%uuid of player%::%arg-1%} is not set:
+			message "Ce home n'existe pas : &7%arg-1%"
+		else:
+			teleport player to {homes::%uuid of player%::%arg-1%}

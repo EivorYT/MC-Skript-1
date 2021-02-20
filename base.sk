@@ -1,0 +1,95 @@
+#------------------------------------------------------------------------# 
+								#	Message #
+#------------------------------------------------------------------------# 
+options:
+	CoulJoueurs: &a
+	MessFirstJoin: &7[&2+&7] &a%player% &rnous rejoint pour la première fois !
+	MessJoin: &7[&2+&7] &a%player%
+	MessQuit: &7[&c-&7] &a%player%
+	MessDeath: &7[&dR.I.P&7] &a%player% &rest mort...
+
+	FormatMessChat: &b&l[&7%{grade.%uuid of player%}%&b&l] &a%player% &7> &r%message%
+
+#----------------------------------------------------------------------------------------------------#
+                                         # Join, Quit, Chat, ... #
+#----------------------------------------------------------------------------------------------------#
+on first join:
+	#set player's gamemode to adventure
+	set {grade.%uuid of player%} to "Chômeur"
+	set join message to "{@MessFirstJoin}"
+
+on join:
+	set player's gamemode to adventure
+	teleport player to {spawn.server}
+	clear player's inventory
+	set slot 0 of the player to a axe named "&6&lAbonne toi"
+	set join message to "{@MessJoin}"
+	send title "&a&lBienvenue &6&l%player%" to player for 5 seconds
+	if player is op:
+		send action bar "&lUn OP s'est connecté(e) &l(&c&l%player%&r&l)" to all players
+	else:
+		send action bar "{@CoulJoueurs}%player% &rs'est connecté(e)" to all players
+
+on chat:
+	set the chat format to "{@FormatMessChat}"
+
+on quit:
+	set leave message to "{@MessQuit}"
+
+on death of player:
+	set death message to "{@MessDeath}"
+
+
+#----------------------------------------------------------------------------------------------------#
+                                         # Tablist et Scoreboard #
+#----------------------------------------------------------------------------------------------------#
+every 5 seconds:
+	loop all players:
+		set tab header to "&5-----------------------------------&r%nl%     &b&lBienvenue sur &e&lTUTO &b&l     %nl%&5-----------------------------------&r%nl%%nl%" and footer to "%nl%%nl%&7&oSurvie : &d0&7/&50   &7&oMini-jeux : &d0&7/&50   &7&oSkyblock : &d0&7/&50   &7&oCréatif : &d0&7/&50   &7&oPvP : &d0&7/&50%nl%%nl%&7&oJoueurs en ligne : &d%amount of players%&7/&5%max players%%nl%%nl%&7&oIP : &r&a..." for loop-player
+		wipe loop-player's sidebar
+		set name of sidebar of loop-player to "&9&l-= &e&lTuto &9&l=-"
+		set score "&r                  " in sidebar of loop-player to 10
+		set score "&3&l&nGrade&r &3&l: &r%{grade.%uuid of loop-player%}%" in sidebar of loop-player to 9
+		set score "&6&l&nArgent&r &6&l: &r0,00" in sidebar of loop-player to 8
+		set score "&r                          " in sidebar of loop-player to 7
+		set score "&7&oSurvie : &d0&7/&50" in sidebar of loop-player to 6
+		set score "&7&oMini-jeux : &d0&7/&50" in sidebar of loop-player to 5
+		set score "&7&oSkyblock : &d0&7/&50" in sidebar of loop-player to 4
+		set score "&7&oCréatif : &d0&7/&50" in sidebar of loop-player to 3
+		set score "&7&oPvP : &d0&7/&50" in sidebar of loop-player to 2
+		set score "&r                 " in sidebar of loop-player to 1
+		set score "          &7&oIP : &r&a...          " in sidebar of loop-player to 0
+
+
+#----------------------------------------------------------------------------------------------------#
+                                         # Autre #
+#----------------------------------------------------------------------------------------------------#
+
+command /thor:
+	permission: op
+	permission message: &cTu ne peut pas faire sa !
+	trigger:
+		give a diamond axe named "&c&lHACHE DE THOR" to player
+		send "&e&lUn grand pouvoir implique de grande responsabilité" to player
+
+on rightclick:
+	if event-item is a diamond axe:
+		if player is holding a diamond axe named "&c&lHACHE DE THOR":
+			strike lightning at the targeted block
+			create a safe explosion of force 10 at the targeted block
+			stop
+
+	else if event-item is a sea pickle:
+		if player is "Eivor_yt":
+			if player is holding a sea pickle named "&c&lMON CHIBRE":
+				cancel event
+				loop 20 times:
+					shoot snowball at speed 5
+					wait 4 ticks
+
+command /chibre:
+	trigger:
+		if player is "Eivor_yt":
+			give a sea pickle named "&c&lMON CHIBRE" to player
+		else:
+			send "&cTa pas sa la dégage zebi !" to player

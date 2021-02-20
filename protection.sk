@@ -1,0 +1,9 @@
+on place of tnt:
+	cancel event
+	message "Petit malin..."
+
+on weather change to rain or thunder:
+	cancel event
+
+at 18:00:
+	set time to 7:00
